@@ -16,10 +16,10 @@
     "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline"
   },
   "devDependencies": {
-    "@babel/cli": "^8.0.1",
-    "@babel/core": "^8.0.1",
-    "@babel/preset-env": "^8.0.2",
-    "@babel/preset-typescript": "^8.0.1",
+    "@babel/cli": "8.0.1",
+    "@babel/core": "8.0.1",
+    "@babel/preset-env": "8.0.2",
+    "@babel/preset-typescript": "8.0.1",
     "@eslint/js": "10.0.1",
     "@types/express": "5.0.6",
     "@types/node": "26.1.0",
@@ -32,14 +32,14 @@
     "typescript-eslint": "8.62.1"
   },
   "dependencies": {
-    "@google/genai": "^2.10.0",
+    "@google/genai": "2.10.0",
     "axios": "1.18.1",
-    "body-parser": "^2.3.0",
+    "body-parser": "2.3.0",
     "cors": "2.8.6",
     "dotenv": "17.4.2",
     "express": "5.2.1",
     "express-rate-limit": "8.5.2",
     "typescript": "6.0.3",
-    "zod": "^4.4.3"
+    "zod": "4.4.3"
   }
 }
