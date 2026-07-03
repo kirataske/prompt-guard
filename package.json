@@ -1,0 +1,45 @@
+{
+  "name": "prompt-guard-node-proxy",
+  "packageManager": "yarn@4.12.0",
+  "type": "module",
+  "module": "es6",
+  "author": {
+    "name": "Denys Kisil",
+    "email": "denys.kisil@student.karazin.ua"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch",
+    "build": "npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline"
+  },
+  "devDependencies": {
+    "@babel/cli": "^8.0.1",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-typescript": "^8.0.1",
+    "@eslint/js": "10.0.1",
+    "@types/express": "5.0.6",
+    "@types/node": "26.1.0",
+    "eslint": "10.6.0",
+    "eslint-config-prettier": "10.1.8",
+    "nodemon": "3.1.14",
+    "prettier": "3.9.4",
+    "ts-node": "10.9.2",
+    "tsc": "2.0.4",
+    "typescript-eslint": "8.62.1"
+  },
+  "dependencies": {
+    "@google/genai": "^2.10.0",
+    "axios": "1.18.1",
+    "body-parser": "^2.3.0",
+    "cors": "2.8.6",
+    "dotenv": "17.4.2",
+    "express": "5.2.1",
+    "express-rate-limit": "8.5.2",
+    "typescript": "6.0.3",
+    "zod": "^4.4.3"
+  }
+}
