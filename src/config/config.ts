@@ -1,7 +1,9 @@
 class AppConfig {
-  // rate limits settings
-  public readonly requestsWindowInMs: number = 15 * 60 * 1000;
-  public readonly requestsPerIp: number = 1000;
+  // rate limits settings (daily)
+  public readonly dailyRequestsWindowInMs: number = 24 * 60 * 60 * 1000; // 24 hours
+  public readonly dailyRequestsPerIp: number = 20; // Gemini's Free Tier Requests Per Day
+  public readonly requestsWindowPerMinuteInMs: number = 60 * 1000; // 1 minute
+  public readonly requestsPerIpPerMinute: number = 5; // Gemini's Free Tier Requests Per Minute
   public readonly useStandartHeaders: boolean = true;
   public readonly useLegacyHeaders: boolean = false;
 
