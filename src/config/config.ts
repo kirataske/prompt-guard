@@ -1,16 +1,35 @@
 class AppConfig {
-  // rate limits settings (daily)
-  public readonly dailyRequestsWindowInMs: number = 24 * 60 * 60 * 1000; // 24 hours
-  public readonly dailyRequestsPerIp: number = 20; // Gemini's Free Tier Requests Per Day
-  public readonly requestsWindowPerMinuteInMs: number = 60 * 1000; // 1 minute
-  public readonly requestsPerIpPerMinute: number = 5; // Gemini's Free Tier Requests Per Minute
+  // daily limits for generating responses.
+  // TODO: including blocked responses, leave it as is?
+  public readonly genAiDailyWindowInMs: number = 24 * 60 * 60 * 1000; // 24 hours.
+  public readonly genAiDailyRequestsPerIp: number = 20; // Gemini's Free Tier Requests Per Day.
+
+  // limits for generating responses (per minute).
+  // TODO: same as daily limits.
+  public readonly genAiMinuteWindowInMs: number = 60 * 1000; // 1 minute.
+  public readonly genAiRequestsPerMinute: number = 5; // Gemini's Free Tier Requests Per Minute.
+
+  // limits for obtaining incident logs.
+  // TODO: adjust according to client's requests frequency.
+  public readonly incidentRequestWindowInMs: number = 15 * 60 * 1000; // 15 minutes (recommended value: express-rate-limit)
+  public readonly incidentRequestsPerIp: number = 100; // (recomended value: express-rate-limit)
+
+  // which headers express-rate-limit should return if rate limit hits;
+  // even if not tested, consider as mutually exclusive settings;
   public readonly useStandartHeaders: boolean = true;
   public readonly useLegacyHeaders: boolean = false;
 
   // form preferences
   public readonly promptSymbolsMaxCount: number = 1000;
 
+  // database preferences
+
+  // wipes out data from db and creates tables.
+  // TODO: isnt removing db file would be simpler? something to ponder about.
+  public readonly resetOnStartup: boolean = false;
+
   // environment variables
+  // TODO: port probably should have been set here and not as env. variable.
   public readonly applicationPort: number;
   public readonly detectorModelUrl: string;
   public readonly geminiApiKey: string;
@@ -31,13 +50,15 @@ class AppConfig {
       );
     }
 
-    if (isNaN(Number(APPLICATION_PORT))) {
+    const appPortParsed = Number(APPLICATION_PORT);
+
+    if (isNaN(appPortParsed)) {
       throw Error(
         "application port should be a number, please fix your environment variables.",
       );
     }
 
-    this.applicationPort = Number(APPLICATION_PORT);
+    this.applicationPort = appPortParsed;
     this.detectorModelUrl = DETECTOR_MODEL_URL;
     this.geminiApiKey = GEMINI_API_KEY;
   }

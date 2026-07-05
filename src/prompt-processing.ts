@@ -1,27 +1,20 @@
-import type { Request, Response } from "express";
-import { flattenError, ZodError } from "zod";
+import { type Request, type Response } from "express";
 
 import { UserPromptScheme, type UserPrompt } from "./forms/prompt.ts";
-import { generateContent } from "./config/gen-ai.ts";
+import { failure, success, ResponseCodes } from "./helpers/response.ts";
+import { generateContent } from "./helpers/gen-ai.ts";
 
 export async function processPrompt(req: Request, res: Response) {
   try {
+    // TODO: use parsed data from middleware before.
     const parsed: UserPrompt = UserPromptScheme.parse(req.body);
 
     const generated = await generateContent(parsed.prompt);
 
-    return res.status(200).send({ status: "ok", response: generated.text });
-  } catch (e) {
-    if (e instanceof ZodError) {
-      const flattenedError = flattenError(e);
-
-      return res
-        .status(400)
-        .send({ message: "invalid form", ...flattenedError });
-    }
-
-    return res
-      .status(500)
-      .send({ message: "error occured while processing prompt" });
+    return success(res, { response: generated.text });
+  } catch (_) {
+    return failure(res, ResponseCodes.INTERNAL_ERR, {
+      message: "error occured while processing prompt",
+    });
   }
 }

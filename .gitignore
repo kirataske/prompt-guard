@@ -19,8 +19,8 @@ node_modules
 # environment variables
 .env
 
-# destination folder for compiled js files
+# destination folder for transpiled js files
 dist
 
-# yarn optimization files and local settings
-.yarn
+# storage folder (for .db files)
+.storage

@@ -1,4 +1,4 @@
-import z, { ZodObject } from "zod";
+import z from "zod";
 
 import { appConfig } from "../config/config.ts";
 
