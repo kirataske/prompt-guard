@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import { flattenError, ZodError } from "zod";
 
 import { analyzePrompt, isIncidentSevere } from "../helpers/prompt-analyzer.ts";
-import { UserPromptScheme, type UserPrompt } from "../forms/prompt.ts";
+import { PromptResultModel } from "../helpers/storage/prompts-model.ts";
+import { IncidentLogModel } from "../helpers/storage/log-model.ts";
 import { failure, ResponseCodes } from "../helpers/response.ts";
-import { IncidentLogger } from "../logging/incident-logger.ts";
 import type { IncidentLog } from "../logging/incident.ts";
 import { logger } from "../logging/logger.ts";
 
@@ -14,20 +14,40 @@ export async function analyzePromptMiddleware(
   next: NextFunction,
 ) {
   try {
-    const parsed: UserPrompt = UserPromptScheme.parse(req.body);
+    if (!req.userPrompt) {
+      return failure(res, ResponseCodes.BAD_REQUEST, {
+        message: "user prompt either was not saved or is absent.",
+      });
+    }
 
-    const potentialIncident: IncidentLog = await analyzePrompt();
+    const potentialIncident: IncidentLog = await analyzePrompt(
+      req.userPrompt?.userIp,
+    );
 
     const incidentSevere: boolean = isIncidentSevere(potentialIncident);
 
     if (!incidentSevere) return next();
 
-    const actualIncident =
-      await IncidentLogger.reportAndSave(potentialIncident);
+    await PromptResultModel.create(
+      {
+        calculatedHash: req.userPromptHash,
+        promptResult: "",
+        incident: {
+          userIp: potentialIncident.userIp,
+          severity: potentialIncident.severity,
+          attackType: potentialIncident.attackType,
+          verdict: potentialIncident.verdict,
+          segment: potentialIncident.segment,
+        },
+      },
+      {
+        include: [IncidentLogModel],
+      },
+    );
 
     return failure(res, ResponseCodes.INJECTION_DETECTED, {
       message: "prompt injection was detected",
-      incident: actualIncident,
+      incident: potentialIncident,
     });
   } catch (e) {
     if (e instanceof ZodError) {

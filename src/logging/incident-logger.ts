@@ -1,5 +1,4 @@
 import { AttackType, IncidentLog, Verdict } from "./incident.ts";
-import { logDbModel } from "../helpers/storage/db.ts";
 import { logger } from "./logger.ts";
 
 export class IncidentLogger {
@@ -12,12 +11,8 @@ export class IncidentLogger {
       throw Error("unknown verdict");
     }
 
-    const savedIncident = await logDbModel.create({
-      ...incident,
-    });
-
     logger.child(incident).error("incident occured");
 
-    return savedIncident;
+    // return savedIncident;
   }
 }

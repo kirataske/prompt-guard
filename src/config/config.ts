@@ -22,11 +22,16 @@ class AppConfig {
   // form preferences
   public readonly promptSymbolsMaxCount: number = 1000;
 
-  // database preferences
+  // storage preferences
 
   // wipes out data from db and creates tables.
   // TODO: isnt removing db file would be simpler? something to ponder about.
   public readonly resetOnStartup: boolean = false;
+
+  // which hash function will be used for calculating stored user prompt.
+  // hashing is used for faster lookup.
+  // 'sha256' is default, you can use 'md5' or 'sha1' for smaller hash sizes
+  public readonly hashFunction = "sha256";
 
   // environment variables
   // TODO: port probably should have been set here and not as env. variable.

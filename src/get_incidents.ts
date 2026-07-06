@@ -1,16 +1,15 @@
 import type { Request, Response } from "express";
 
+import { failure, ResponseCodes } from "./helpers/response.ts";
 import { logger } from "./logging/logger.ts";
-import { failure, success, ResponseCodes } from "./helpers/response.ts";
-import { logDbModel } from "./helpers/storage/db.ts";
 
 export async function getIncidents(req: Request, res: Response) {
   try {
-    return success(res, {
-      incidents: await logDbModel.findAll({
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-      }),
-    });
+    // return success(res, {
+    //   incidents: await logModel.findAll({
+    //     attributes: { exclude: ["createdAt", "updatedAt"] },
+    //   }),
+    // });
   } catch (e) {
     logger.error(e);
 

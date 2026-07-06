@@ -1,9 +1,4 @@
-import {
-  AttackType,
-  IncidentLog,
-  Severity,
-  Verdict,
-} from "../logging/incident.ts";
+import { IncidentLog, Severity } from "../logging/incident.ts";
 
 // TODO: better naming: despite having "severe" in name, it'll return 'true' even if incident.severity = 'medium'.
 export function isIncidentSevere(incident: IncidentLog): boolean {
@@ -12,15 +7,10 @@ export function isIncidentSevere(incident: IncidentLog): boolean {
 }
 
 export async function analyzePrompt(
-  userIp?: string,
-  prompt?: string,
+  userIp: string,
+  // prompt?: string,
 ): Promise<IncidentLog> {
   // TODO: waiting for detector implementation and format establishment.
   // TODO: implement API calls to detector via axios.
-  return await new IncidentLog(
-    "192.168.0.1",
-    AttackType.DIRECT_INJECTION,
-    Severity.HIGH,
-    Verdict.BLOCKED,
-  );
+  return await new IncidentLog(userIp);
 }

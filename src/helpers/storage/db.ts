@@ -1,44 +1,12 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { Sequelize } from "sequelize-typescript";
+
+import { PromptResultModel } from "./prompts-model.ts";
+import { IncidentLogModel } from "./log-model.ts";
 
 // TODO: should we encrypt incidents database?
-export const logDb = new Sequelize({
+export const appDb = new Sequelize({
   dialect: "sqlite",
-  storage: ".storage/logs.db",
+  storage: ".storage/app.db",
 });
 
-export const logDbModel = logDb.define("Logs", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  userIp: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  happenedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  severity: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: "low",
-  },
-  attackType: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: "none",
-  },
-  verdict: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: "none",
-  },
-  segment: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-    defaultValue: "",
-  },
-});
+appDb.addModels([PromptResultModel, IncidentLogModel]);

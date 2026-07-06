@@ -1,39 +1,27 @@
 {
-   "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "es6",
-      "esModuleInterop": true
-    },
-    "esm": true
-  },
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "esnext",
+    "module": "node16",
     "target": "esnext",
+    "moduleResolution": "node16",
     "lib": ["esnext"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "strictPropertyInitialization": false,
+    "rewriteRelativeImportExtensions": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "strict": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts"
-  ], 
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }
