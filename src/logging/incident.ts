@@ -9,7 +9,7 @@ export const AttackType = {
   PAYLOAD_SPLIT: "payload_split",
 };
 
-// TODO: same for verdict;
+// TODO: same as for verdict;
 export const Verdict = {
   VALID: "valid",
   SUSPICIOUS: "suspicious",

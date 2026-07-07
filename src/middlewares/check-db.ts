@@ -1,8 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 
 import { failure, ResponseCodes, success } from "../helpers/response.ts";
-import { PromptResultModel } from "../helpers/storage/prompts-model.ts";
-import { IncidentLogModel } from "../helpers/storage/log-model.ts";
+import { PRMHelper } from "../helpers/storage/query-helper.ts";
 import { logger } from "../logging/logger.ts";
 
 export async function lookupDb(
@@ -17,28 +16,29 @@ export async function lookupDb(
       });
     }
 
-    const foundUserPrompt = await PromptResultModel.findOne({
-      where: {
-        calculatedHash: req.userPromptHash,
-      },
-      include: [IncidentLogModel],
-    });
+    const foundUserPrompt = await PRMHelper.obtainPromptFromCache(
+      req.userPromptHash,
+    );
 
     if (!foundUserPrompt) {
       return next();
-    } else if (foundUserPrompt && !foundUserPrompt.get().incident) {
-      // if incident is found but it not caused incident, then we just return it.
-      return success(res, {
-        response: foundUserPrompt.get().promptResult,
-      });
-    } else {
-      // assume that we have incident because previous check failed.
+    }
 
-      return failure(res, ResponseCodes.INJECTION_DETECTED, {
-        message: "prompt injection was detected",
-        incident: foundUserPrompt.get().incident.get(),
+    if (foundUserPrompt && !foundUserPrompt.get().incident) {
+      // if prompt is found but it does not caused any incidents, then we just return it.
+      const response = foundUserPrompt.get().promptResult;
+
+      return success(res, {
+        response,
       });
     }
+    // assume that we have incident because previous check failed.
+    const incident = foundUserPrompt.get().incident.get();
+
+    return failure(res, ResponseCodes.INJECTION_DETECTED, {
+      message: "prompt injection was detected",
+      incident,
+    });
   } catch (e) {
     logger.info(e);
 

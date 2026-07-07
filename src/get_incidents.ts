@@ -1,15 +1,14 @@
 import type { Request, Response } from "express";
 
-import { failure, ResponseCodes } from "./helpers/response.ts";
+import { failure, ResponseCodes, success } from "./helpers/response.ts";
 import { logger } from "./logging/logger.ts";
+import { ILMHelper } from "./helpers/storage/query-helper.ts";
 
 export async function getIncidents(req: Request, res: Response) {
   try {
-    // return success(res, {
-    //   incidents: await logModel.findAll({
-    //     attributes: { exclude: ["createdAt", "updatedAt"] },
-    //   }),
-    // });
+    const incidents = await ILMHelper.obtainIncidents();
+
+    return success(res, { incidents });
   } catch (e) {
     logger.error(e);
 

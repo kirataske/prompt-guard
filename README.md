@@ -15,7 +15,7 @@ PromptGuard's GuardRail Node Proxy.
    1. [Загальні деталі](#загальні-деталі)
    2. [Загальні відповіді від серверу](#загальні-відповіді-від-серверу)
    3. [Генерація контенту](#генерація-контенту)
-   4. ~~[Отримання записів журналу інцидентів](#отримання-записів-журналу-інцидентів)~~ (тимчасово не працює)
+   4. [Отримання записів журналу інцидентів](#отримання-записів-журналу-інцидентів)
 
 # Швидкий старт
 
@@ -206,7 +206,7 @@ yarn run build && yarn run start
 }
 ```
 
-## ~~Отримання записів журналу інцидентів:~~ (тимчасово не працює)
+## Отримання записів журналу інцидентів:
 
 **Шлях**: `/incidents`
 <br>**Метод**: `GET`,
@@ -228,7 +228,8 @@ yarn run build && yarn run start
             "attackType": which attack was attempted,
             "severity": how severe attempt was,
             "verdict": blocked or considered as suspicious,
-            "segment": where injection was detected
+            "segment": where injection was detected,
+            "userPromptId": id of cached prompt that caused this incident
         },
         ...
     ]

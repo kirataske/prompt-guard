@@ -5,7 +5,7 @@ class AppConfig {
   public readonly genAiDailyRequestsPerIp: number = 20; // Gemini's Free Tier Requests Per Day.
 
   // limits for generating responses (per minute).
-  // TODO: same as daily limits.
+  // TODO: same as for daily limits.
   public readonly genAiMinuteWindowInMs: number = 60 * 1000; // 1 minute.
   public readonly genAiRequestsPerMinute: number = 5; // Gemini's Free Tier Requests Per Minute.
 
@@ -19,7 +19,13 @@ class AppConfig {
   public readonly useStandartHeaders: boolean = true;
   public readonly useLegacyHeaders: boolean = false;
 
-  // form preferences
+  // genai preferences.
+
+  // which Gemini model is used for generating content;
+  // https://ai.google.dev/gemini-api/docs/interactions-overview#supported-models-agents;
+  public readonly geminiModel = "gemini-2.5-flash";
+
+  // how much symbols user have per prompt.
   public readonly promptSymbolsMaxCount: number = 1000;
 
   // storage preferences
@@ -28,8 +34,8 @@ class AppConfig {
   // TODO: isnt removing db file would be simpler? something to ponder about.
   public readonly resetOnStartup: boolean = false;
 
-  // which hash function will be used for calculating stored user prompt.
-  // hashing is used for faster lookup.
+  // which hash function is used for calculating stored user prompt.
+  // hashing is used for faster existing prompt results lookup.
   // 'sha256' is default, you can use 'md5' or 'sha1' for smaller hash sizes
   public readonly hashFunction = "sha256";
 
