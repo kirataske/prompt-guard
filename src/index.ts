@@ -1,7 +1,6 @@
 import "dotenv/config";
 
 import express, { type Application } from "express";
-import bodyParser from "body-parser";
 
 import {
   genAiDailyRLSettings,
@@ -19,7 +18,7 @@ import { logger } from "./logging/logger.ts";
 
 const app: Application = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.post(
   "/",
   genAiDailyRLSettings,

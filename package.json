@@ -18,6 +18,7 @@
     "@babel/preset-env": "^8.0.2",
     "@babel/preset-typescript": "8.0.1",
     "@eslint/js": "10.0.1",
+    "@types/cors": "^2.8.19",
     "@types/express": "5.0.6",
     "@types/node": "26.1.0",
     "eslint": "10.6.0",
