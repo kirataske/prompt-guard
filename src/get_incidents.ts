@@ -12,10 +12,8 @@ export async function getIncidents(req: Request, res: Response) {
   } catch (e) {
     logger.error(e);
 
-    return failure(
-      res,
-      ResponseCodes.INTERNAL_ERR,
-      "error occured while retriving incidents.",
-    );
+    return failure(res, ResponseCodes.INTERNAL_ERR, {
+      message: "error occured while retriving incidents.",
+    });
   }
 }

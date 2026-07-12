@@ -16,8 +16,11 @@ import { appDb } from "./helpers/storage/db.ts";
 import { appConfig } from "./config/config.ts";
 import { logger } from "./logging/logger.ts";
 
+import { mw } from "request-ip";
+
 const app: Application = express();
 
+app.use(mw());
 app.use(express.json());
 app.post(
   "/",

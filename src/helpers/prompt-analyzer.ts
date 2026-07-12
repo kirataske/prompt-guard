@@ -7,10 +7,11 @@ export function isIncidentSevere(incident: IncidentLog): boolean {
 }
 
 export async function analyzePrompt(
-  userIp: string,
+  sessionId: string,
+  userIp: string | undefined,
   // prompt?: string,
 ): Promise<IncidentLog> {
   // TODO: waiting for detector implementation and format establishment.
   // TODO: implement API calls to detector via axios.
-  return await new IncidentLog(userIp);
+  return await new IncidentLog(sessionId, userIp);
 }

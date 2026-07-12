@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { failure, ResponseCodes, success } from "../helpers/response.ts";
 import { PRMHelper } from "../helpers/storage/query-helper.ts";
 import { logger } from "../logging/logger.ts";
+import { isIpLoopback } from "../helpers/ip-is-loopback.ts";
 
 export async function lookupDb(
   req: Request,
@@ -14,6 +15,15 @@ export async function lookupDb(
       return failure(res, ResponseCodes.BAD_REQUEST, {
         message: "user prompt either was not saved or is absent.",
       });
+    }
+
+    if (!req.userIp || isIpLoopback(req.userIp)) {
+      logger.warn(
+        `cannot retrieve ip for ${req.userPrompt.sessionId}, proceeding without their IP address.`,
+      );
+
+      // ensuring that userIp IS not set because of condition.
+      req.userIp = undefined;
     }
 
     const foundUserPrompt = await PRMHelper.obtainPromptFromCache(

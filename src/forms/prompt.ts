@@ -3,7 +3,7 @@ import z from "zod";
 import { appConfig } from "../config/config.ts";
 
 export const UserPromptScheme = z.object({
-  userIp: z.ipv4(),
+  sessionId: z.uuidv4(),
   prompt: z
     .string()
     .nonempty({ error: "empty prompt" })

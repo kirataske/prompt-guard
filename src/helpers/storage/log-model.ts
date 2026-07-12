@@ -15,7 +15,11 @@ import { PromptResultModel } from "./prompts-model.ts";
 export class IncidentLogModel extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
-  userIp: string;
+  sessionId: string;
+
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  userIp?: string;
 
   @AllowNull(false)
   @Default(DataType.NOW)

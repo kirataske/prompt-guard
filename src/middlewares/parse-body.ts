@@ -9,6 +9,16 @@ export function parseBody(req: Request, res: Response, next: NextFunction) {
   try {
     const parsed: UserPrompt = UserPromptScheme.parse(req.body);
 
+    // let's assume that ip address is always sent by client
+    // BUT how it would be trustworthy,
+    // if request is sent from the same spot where proxy hosted
+    // we'll eventually get loopback address.
+    // gladly, userIp isn't used in hash calculations anymore
+    // it's replaced with session ID - unique UUIDv4 string.
+    // TODO: decide the fate of userIp.
+    const userIp: string | undefined = req.userIp;
+
+    req.userIp = userIp;
     req.userPrompt = parsed;
     req.userPromptHash = hashUserPrompt(parsed);
 

@@ -23,20 +23,23 @@ export const Severity = {
 };
 
 export class IncidentLog {
-  public userIp: string;
+  public sessionId: string;
+  public userIp?: string | undefined;
   public attackType: string;
   public severity: string;
   //   happenedAt: string
   public verdict: string;
   public segment: string;
   constructor(
-    userIp: string,
+    sessionId: string,
+    userIp: string | undefined,
     attackType: string = AttackType.NONE,
     severity: string = Severity.LOW,
     //   happenedAt: string
     verdict: string = Verdict.VALID,
     segment: string = "",
   ) {
+    this.sessionId = sessionId;
     this.userIp = userIp;
     this.attackType = attackType;
     this.severity = severity;

@@ -7,5 +7,8 @@ declare module "express" {
     userPrompt?: UserPrompt;
     // stores precalculated hash of prompt
     userPromptHash?: string;
+
+    // we can't be sure that IP is collected properly.
+    userIp?: string | undefined;
   }
 }
