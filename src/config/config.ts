@@ -45,9 +45,6 @@ class AppConfig {
   public readonly detectorModelUrl: string;
   public readonly geminiApiKey: string;
 
-  // TODO: are we adding CORS policies?
-  public readonly frontendUiUrl: string;
-
   private static _instance: AppConfig;
 
   public static get Instance() {

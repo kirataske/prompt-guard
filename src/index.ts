@@ -15,11 +15,18 @@ import { getIncidents } from "./get_incidents.ts";
 import { appDb } from "./helpers/storage/db.ts";
 import { appConfig } from "./config/config.ts";
 import { logger } from "./logging/logger.ts";
+import cors from "cors";
 
 import { mw } from "request-ip";
 
 const app: Application = express();
 
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+  }),
+);
 app.use(mw());
 app.use(express.json());
 app.post(
