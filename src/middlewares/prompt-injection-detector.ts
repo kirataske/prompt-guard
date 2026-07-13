@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 
+import type { IncidentLog } from "../logging/incident.ts";
+
 import { analyzePrompt, isIncidentSevere } from "../helpers/prompt-analyzer.ts";
 import { failure, ResponseCodes } from "../helpers/response.ts";
 import { PRMHelper } from "../helpers/storage/query-helper.ts";
-import type { IncidentLog } from "../logging/incident.ts";
-import { logger } from "../logging/logger.ts";
 import { isIpLoopback } from "../helpers/ip-is-loopback.ts";
+import { logger } from "../logging/logger.ts";
 
 export async function analyzePromptMiddleware(
   req: Request,
@@ -29,7 +30,7 @@ export async function analyzePromptMiddleware(
     }
 
     const incident: IncidentLog = await analyzePrompt(
-      req.userPrompt?.sessionId,
+      req.userPrompt,
       req.userIp,
     );
 

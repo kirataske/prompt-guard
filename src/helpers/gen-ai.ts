@@ -8,5 +8,9 @@ export async function generateContent(prompt: string) {
   return await ai.models.generateContent({
     model: appConfig.geminiModel,
     contents: prompt,
+    config: {
+      systemInstruction:
+        "відповідай корокто, по суті та мовою, якою користувач надав команди.",
+    },
   });
 }

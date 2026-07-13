@@ -1,17 +1,39 @@
+import axios from "axios";
+
+import type { UserPrompt } from "../forms/prompt.ts";
+
 import { IncidentLog, Severity } from "../logging/incident.ts";
+import { appConfig } from "../config/config.ts";
+
+export interface IDetectorResponse {
+  verdict: string;
+  severity: string;
+  attackType: string;
+  segment: string;
+}
 
 // TODO: better naming: despite having "severe" in name, it'll return 'true' even if incident.severity = 'medium'.
 export function isIncidentSevere(incident: IncidentLog): boolean {
-  if (incident.severity == Severity.LOW) return false;
-  return true;
+  return incident.severity != Severity.LOW;
 }
 
 export async function analyzePrompt(
-  sessionId: string,
+  prompt: UserPrompt,
   userIp: string | undefined,
-  // prompt?: string,
 ): Promise<IncidentLog> {
-  // TODO: waiting for detector implementation and format establishment.
-  // TODO: implement API calls to detector via axios.
-  return await new IncidentLog(sessionId, userIp);
+  const response = await axios.post(`${appConfig.detectorModelUrl}/analyze`, {
+    text: prompt.prompt,
+  });
+
+  const { verdict, severity, attackType, segment }: IDetectorResponse =
+    response.data as IDetectorResponse;
+
+  return new IncidentLog(
+    prompt.sessionId,
+    userIp,
+    attackType,
+    severity,
+    verdict,
+    segment,
+  );
 }

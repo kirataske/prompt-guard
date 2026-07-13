@@ -4,6 +4,7 @@ import { flattenError, ZodError } from "zod";
 import { UserPromptScheme, type UserPrompt } from "../forms/prompt.ts";
 import { failure, ResponseCodes } from "../helpers/response.ts";
 import { hashUserPrompt } from "../helpers/hash.ts";
+import { logger } from "../logging/logger.ts";
 
 export function parseBody(req: Request, res: Response, next: NextFunction) {
   try {
@@ -32,6 +33,8 @@ export function parseBody(req: Request, res: Response, next: NextFunction) {
         ...flattenedError,
       });
     }
+
+    logger.error(e);
 
     return failure(res, ResponseCodes.INTERNAL_ERR, {
       message: "internal err occured",

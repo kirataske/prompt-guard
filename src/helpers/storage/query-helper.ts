@@ -53,6 +53,7 @@ export class PRMHelper {
         calculatedHash: calculatedHash,
         promptResult: promptResult,
         incident: {
+          sessionId: incident.sessionId,
           userIp: incident.userIp,
           severity: incident.severity,
           attackType: incident.attackType,
