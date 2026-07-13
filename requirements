@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+scikit-learn
+sentence-transformers
+joblib
+datasets
+numpy
+python-dotenv

@@ -4,7 +4,7 @@ from app.core.ML import run_detection_pipeline
 
 router = APIRouter()
 
-@router.post("/analyze", response_model=AnalyzeResponse)
+@router.post('/analyze', response_model=AnalyzeResponse)
 async def analyze_prompt(payload: AnalyzeRequest):
     try:
         result = run_detection_pipeline(payload.text)

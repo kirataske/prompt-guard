@@ -1,32 +1,25 @@
 from pydantic import BaseModel
 from enum import Enum
 
-class VerdictEnum(str, Enum):
-    CLEAN = "clean"
-    SUSPICIOUS = "suspicious"
-    BLOCKED = "blocked"
+class AttackType(str, Enum):
+    none = 'none'
+    direct_injection = 'direct_injection'
+    indirect_injection = 'indirect_injection'
+    system_prompt_leak = 'system_prompt_leak'
+    role_play = 'role_play'
+    obfuscation = 'obfuscation'
+    payload_splitting = 'payload_splitting'
 
-class AttackTypeEnum(str, Enum):
-    NONE = "none"
-    PROMPT_INJECTION = "prompt_injection"
-    JAILBREAK = "jailbreak"
-    INDIRECT = "indirect_injection"
-    OBFUSCATION = "obfuscation"
-    ROLE_PLAY = "role_play"
-    UNKNOWN = "unknown"
-
-class DetectionSourceEnum(str, Enum):
-    NONE = "none"
-    LEVEL_1_HEURISTIC = "level_1_heuristic"
-    LEVEL_2_ML = "level_2_ml"
-    LEVEL_3_LLM = "level_3_llm"
+class Severity(str, Enum):
+    low = 'low'
+    medium = 'medium'
+    high = 'high'
 
 class AnalyzeRequest(BaseModel):
     text: str
 
 class AnalyzeResponse(BaseModel):
-    verdict: VerdictEnum
-    risk_level: str
-    attack_type: AttackTypeEnum
-    confidence: float
-    detected_by: DetectionSourceEnum
+    verdict: str
+    severity: Severity
+    attackType: AttackType
+    segment: str = ""

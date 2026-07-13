@@ -1,4 +1,4 @@
-from app.dto import AnalyzeResponse, VerdictEnum, AttackTypeEnum, DetectionSourceEnum
+from app.dto import AnalyzeResponse, AttackType, Severity
 from app.core.level_1 import check_level_1
 from app.core.level_2 import MLDetector
 from app.core.level_3 import LLMJudge
@@ -8,47 +8,80 @@ llm_judge = LLMJudge()
 
 
 def run_detection_pipeline(text: str) -> AnalyzeResponse:
-    l1_result = check_level_1(text)
+    print(f"Analyzing: {text}")
 
-    if l1_result is not None:
+    l1_result = check_level_1(text)
+    if l1_result:
+        print("Blocked by Level 1")
         return AnalyzeResponse(
-            verdict=VerdictEnum.BLOCKED,
-            risk_level=l1_result["risk_level"],
-            attack_type=AttackTypeEnum.HEURISTIC_SIGNATURE,
-            confidence=100.0,
-            detected_by=DetectionSourceEnum.LEVEL_1_HEURISTIC
+            verdict=l1_result['verdict'],
+            severity=Severity(l1_result['severity']),
+            attackType=AttackType(l1_result['attackType']),
+            segment=l1_result.get('segment', '')
         )
 
     l2_raw = ml_detector.analyze(text)
-    if l2_raw["verdict"] == "blocked":
+
+    if l2_raw['verdict'] == 'blocked':
+        print(f"Blocked by Level 2: {l2_raw['attackType']}")
         return AnalyzeResponse(
-            verdict=VerdictEnum.BLOCKED,
-            risk_level=l2_raw["risk_level"],
-            attack_type=AttackTypeEnum.UNKNOWN,
-            confidence=l2_raw["confidence"],
-            detected_by=DetectionSourceEnum.LEVEL_2_ML
+            verdict=l2_raw['verdict'],
+            severity=Severity(l2_raw['severity']),
+            attackType=AttackType(l2_raw['attackType']),
+            segment=l2_raw.get('segment', '')
         )
-    if l2_raw["verdict"] == "clean" and l2_raw["confidence"] < 90.0:
-        l3_raw = llm_judge.analyze(text)
 
-        if l3_raw["verdict"] == "blocked":
-            try:
-                attack_enum = AttackTypeEnum(l3_raw["attack_type"])
-            except ValueError:
-                attack_enum = AttackTypeEnum.UNKNOWN
+    print("Level 2 passed, Level 3")
+    l3_raw = llm_judge.analyze(text)
 
-            return AnalyzeResponse(
-                verdict=VerdictEnum.BLOCKED,
-                risk_level="high",
-                attack_type=attack_enum,
-                confidence=l3_raw["confidence"],
-                detected_by=DetectionSourceEnum.LEVEL_3_LLM
-            )
+    if l3_raw.get('verdict') == 'error':
+        print("Level 3 error")
+        return AnalyzeResponse(
+            verdict='blocked',
+            severity=Severity.high,
+            attackType=AttackType.none,
+            segment='Level 3 API error'
+        )
 
+    llm_severity = l3_raw.get('severity', 'high' if l3_raw.get('verdict') == 'blocked' else 'low')
+
+    try:
+        severity_enum = Severity(llm_severity)
+    except ValueError:
+        severity_enum = Severity.high if l3_raw.get('verdict') == 'blocked' else Severity.low
+
+    if l3_raw['verdict'] == 'blocked':
+        print(f"Blocked by Level 3: {l3_raw.get('attackType')}")
+        try:
+            attack_enum = AttackType(l3_raw['attackType'])
+        except ValueError:
+            attack_enum = AttackType.direct_injection
+
+        return AnalyzeResponse(
+            verdict='blocked',
+            severity=severity_enum,
+            attackType=attack_enum,
+            segment=''
+        )
+
+    if l3_raw['verdict'] == 'suspicious':
+        print(f"Suspicious by Level 3: {l3_raw.get('attackType')}")
+        try:
+            attack_enum = AttackType(l3_raw['attackType'])
+        except ValueError:
+            attack_enum = AttackType.none
+
+        return AnalyzeResponse(
+            verdict='suspicious',
+            severity=severity_enum,
+            attackType=attack_enum,
+            segment=''
+        )
+
+    print(f"Analysis finished: clean ")
     return AnalyzeResponse(
-        verdict=VerdictEnum.CLEAN,
-        risk_level=l2_raw["risk_level"],
-        attack_type=AttackTypeEnum.NONE,
-        confidence=l2_raw["confidence"],
-        detected_by=DetectionSourceEnum.NONE
+        verdict='clean',
+        severity=severity_enum,
+        attackType=AttackType.none,
+        segment=''
     )

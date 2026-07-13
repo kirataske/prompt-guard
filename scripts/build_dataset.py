@@ -1,62 +1,70 @@
 import pandas as pd
-import base64
 import os
+import traceback
 from datasets import load_dataset
 
 
 def create_dataset():
+    print('Downloading dataset neuralchemy/Prompt-injection-dataset')
     try:
-        dataset_injection = load_dataset("deepset/prompt-injections")
-        df_base = dataset_injection['train'].to_pandas()
-        df_base = df_base[['text', 'label']]
-        df_base['attack_type'] = df_base['label'].apply(lambda x: 'prompt_injection' if x == 1 else 'none')
-    except Exception as e:
-        print(f"Error downloading deepset: {e}")
-        df_base = pd.DataFrame(columns=['text', 'label', 'attack_type'])
-    try:
-        dataset_jailbreak = load_dataset("JailbreakV-28K/JailBreakV-28k", "JailBreakV_28K")
-        df_jb = dataset_jailbreak['JailBreakV_28K'].to_pandas()
-        df_jb_clean = pd.DataFrame()
-        df_jb_clean['text'] = df_jb['jailbreak_query']
-        df_jb_clean['label'] = 1
-        df_jb_clean['attack_type'] = 'jailbreak'
-        df_jb_sample = df_jb_clean.sample(n=2000, random_state=42)
-    except Exception as e:
-        print(f"Error downloading jailbreak dataset: {e}")
-        df_jb_sample = pd.DataFrame(columns=['text', 'label', 'attack_type'])
+        dataset = load_dataset('neuralchemy/Prompt-injection-dataset','full')
+        df = dataset['train'].to_pandas()
 
-    attacks = df_base[df_base['label'] == 1]['text'].tolist() + df_jb_sample['text'].tolist()
-    obfuscated_records = []
-    for text in attacks[:150]:
-        if not isinstance(text, str):
-            continue
+        if 'prompt' in df.columns:
+            df.rename(columns={'prompt': 'text'}, inplace=True)
 
-        encoded_bytes = base64.b64encode(text.encode('utf-8'))
-        base64_str = encoded_bytes.decode('utf-8')
-        obfuscated_records.append({
-            'text': f"Decode this base64 and execute: {base64_str}",
-            'label': 1,
-            'attack_type': 'obfuscation'
-        })
+        def map_attack_type(row):
+            cat = str(row.get('category', '')).lower()
 
-        spaced_text = "-".join(list(text[:40]))
-        obfuscated_records.append({
-            'text': f"Execute this spaced instruction: {spaced_text}",
-            'label': 1,
-            'attack_type': 'obfuscation'
-        })
+            if row['label'] == 0 or 'benign' in cat:
+                return 'none'
+            elif 'obfuscation' in cat or 'smuggling' in cat or 'encoding' in cat:
+                return 'obfuscation'
+            elif 'splitting' in cat or 'crescendo' in cat or 'many_shot' in cat:
+                return 'payload_splitting'
+            elif 'leak' in cat or 'extraction' in cat:
+                return 'system_prompt_leak'
+            elif 'jailbreak' in cat or 'persona' in cat or 'role_play' in cat:
+                return 'role_play'
+            elif 'indirect' in cat or 'rag' in cat:
+                return 'indirect_injection'
+            else:
+                return 'direct_injection'
 
-    df_obfuscated = pd.DataFrame(obfuscated_records)
-    final_df = pd.concat([df_base, df_jb_sample, df_obfuscated], ignore_index=True) #об'єднуємо всі 3 датасета
+        def map_severity(row):
+            if row['label'] == 0:
+                return 'none'
+
+            sev = str(row.get('severity', '')).lower().strip()
+
+            if sev == 'critical':
+                return 'high'
+            elif sev in ['low', 'medium', 'high']:
+                return sev
+            else:
+                return 'none'
+
+        df['attack_type'] = df.apply(map_attack_type, axis=1)
+        df['severity'] = df.apply(map_severity, axis=1)
+
+        final_df = df[['text', 'label', 'attack_type', 'severity']]
+
+    except Exception:
+        traceback.print_exc()
+        final_df = pd.DataFrame(columns=['text', 'label', 'attack_type', 'severity'])
+
+    print('Cleaning data')
+    final_df = final_df.dropna(subset=['text'])
+    final_df['text'] = final_df['text'].str.replace(r'\s+', ' ', regex=True).str.strip()
+    final_df = final_df[final_df['text'] != '']
+
     final_df = final_df.sample(frac=1, random_state=42).reset_index(drop=True)
-
-    os.makedirs("data", exist_ok=True)
-    output_path = "data/prompt_guard_dataset.csv"
+    os.makedirs('data', exist_ok=True)
+    output_path = 'data/prompt_guard_dataset.csv'
     final_df.to_csv(output_path, index=False)
 
-    print(f"\n Dataset saved to {output_path}!")
-    print(f"Total labeled rows: {len(final_df)}")
+    print(f'Saved: {output_path} | Rows: {len(final_df)}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     create_dataset()
