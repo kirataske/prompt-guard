@@ -30,6 +30,10 @@
 ```
 # Створення віртуального середовища
 python -m venv .venv
+# Активація для Windows
+.venv\Scripts\activate
+# Для Linux/macOS:
+source .venv/bin/activate
 # Встановлення пакетів
 pip install -r requirements.txt
 ```
