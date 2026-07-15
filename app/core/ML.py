@@ -1,4 +1,4 @@
-from app.dto import AnalyzeResponse, AttackType, Severity
+from app.dto import AnalyzeResponse, AttackType, Severity, Verdict
 from app.core.level_1 import check_level_1
 from app.core.level_2 import MLDetector
 from app.core.level_3 import LLMJudge
@@ -14,7 +14,7 @@ def run_detection_pipeline(text: str) -> AnalyzeResponse:
     if l1_result:
         print("Blocked by Level 1")
         return AnalyzeResponse(
-            verdict=l1_result['verdict'],
+            verdict=Verdict(l1_result['verdict']),
             severity=Severity(l1_result['severity']),
             attackType=AttackType(l1_result['attackType']),
             segment=l1_result.get('segment', '')
@@ -25,7 +25,7 @@ def run_detection_pipeline(text: str) -> AnalyzeResponse:
     if l2_raw['verdict'] == 'blocked':
         print(f"Blocked by Level 2: {l2_raw['attackType']}")
         return AnalyzeResponse(
-            verdict=l2_raw['verdict'],
+            verdict=Verdict(l2_raw['verdict']),
             severity=Severity(l2_raw['severity']),
             attackType=AttackType(l2_raw['attackType']),
             segment=l2_raw.get('segment', '')
@@ -37,7 +37,7 @@ def run_detection_pipeline(text: str) -> AnalyzeResponse:
     if l3_raw.get('verdict') == 'error':
         print("Level 3 error")
         return AnalyzeResponse(
-            verdict='blocked',
+            verdict=Verdict.blocked,
             severity=Severity.high,
             attackType=AttackType.none,
             segment='Level 3 API error'
@@ -58,10 +58,10 @@ def run_detection_pipeline(text: str) -> AnalyzeResponse:
             attack_enum = AttackType.direct_injection
 
         return AnalyzeResponse(
-            verdict='blocked',
+            verdict=Verdict.blocked,
             severity=severity_enum,
             attackType=attack_enum,
-            segment=''
+            segment=l3_raw.get('segment', '')
         )
 
     if l3_raw['verdict'] == 'suspicious':
@@ -72,15 +72,15 @@ def run_detection_pipeline(text: str) -> AnalyzeResponse:
             attack_enum = AttackType.none
 
         return AnalyzeResponse(
-            verdict='suspicious',
+            verdict=Verdict.suspicious,
             severity=severity_enum,
             attackType=attack_enum,
-            segment=''
+            segment=l3_raw.get('segment', '')
         )
 
     print(f"Analysis finished: clean ")
     return AnalyzeResponse(
-        verdict='clean',
+        verdict=Verdict.clean,
         severity=severity_enum,
         attackType=AttackType.none,
         segment=''

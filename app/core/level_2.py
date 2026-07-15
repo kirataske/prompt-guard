@@ -51,7 +51,6 @@ class MLDetector:
 
         if pred_attack != 'none':
             if confidence < self.threshold:
-                print('Level 2: Deferred to Level 3')
                 return {
                     'verdict': 'clean',
                     'severity': 'low',

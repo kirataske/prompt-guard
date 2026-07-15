@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 from enum import Enum
 
+class Verdict(str, Enum):
+    clean = 'clean'
+    suspicious = 'suspicious'
+    blocked = 'blocked'
+
 class AttackType(str, Enum):
     none = 'none'
     direct_injection = 'direct_injection'
@@ -19,7 +24,7 @@ class AnalyzeRequest(BaseModel):
     text: str
 
 class AnalyzeResponse(BaseModel):
-    verdict: str
+    verdict: Verdict
     severity: Severity
     attackType: AttackType
     segment: str = ""

@@ -12,11 +12,12 @@ SIGNATURES = {
 
 def check_level_1(text: str) -> dict | None:
     for pattern, attack_type in SIGNATURES.items():
-        if re.search(pattern, text):
+        match = re.search(pattern, text)
+        if match:
             return {
                 'verdict': 'blocked',
                 'severity': 'high',
                 'attackType': attack_type,
-                'segment': ''
+                'segment': match.group(0)
             }
     return None
