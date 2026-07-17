@@ -223,7 +223,8 @@ yarn run build && yarn run start
         "attackType": which attack was attempted,
         "severity": how severe attempt was,
         "verdict": blocked or considered as suspicious,
-        "segment": where injection was detected
+        "segment": where injection was detected,
+        "userPromptId": id of cached prompt that caused this incident
     }
 }
 ```

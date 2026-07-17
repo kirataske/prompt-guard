@@ -1,12 +1,9 @@
 import "dotenv/config";
 
 import express, { type Application } from "express";
+import { mw } from "request-ip";
+import cors from "cors";
 
-import {
-  genAiDailyRLSettings,
-  genAiMinuteRLSettings,
-  incidentLogRequestsRLSettings,
-} from "./config/rate-limit.ts";
 import { analyzePromptMiddleware } from "./middlewares/prompt-injection-detector.ts";
 import { parseBody } from "./middlewares/parse-body.ts";
 import { processPrompt } from "./prompt-processing.ts";
@@ -15,9 +12,11 @@ import { getIncidents } from "./get_incidents.ts";
 import { appDb } from "./helpers/storage/db.ts";
 import { appConfig } from "./config/config.ts";
 import { logger } from "./logging/logger.ts";
-import cors from "cors";
-
-import { mw } from "request-ip";
+import {
+  genAiDailyRLSettings,
+  genAiMinuteRLSettings,
+  incidentLogRequestsRLSettings,
+} from "./config/rate-limit.ts";
 
 const app: Application = express();
 

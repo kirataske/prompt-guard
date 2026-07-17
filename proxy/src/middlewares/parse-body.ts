@@ -6,6 +6,12 @@ import { failure, ResponseCodes } from "../helpers/response.ts";
 import { hashUserPrompt } from "../helpers/hash.ts";
 import { logger } from "../logging/logger.ts";
 
+/**
+ * middleware thats... well... parses body?
+ *
+ * uses ZodSchema to parse and validate user form..
+ * also collects user's IP if possible.
+ */
 export function parseBody(req: Request, res: Response, next: NextFunction) {
   try {
     const parsed: UserPrompt = UserPromptScheme.parse(req.body);

@@ -2,6 +2,14 @@ import { GoogleGenAI } from "@google/genai";
 
 import { appConfig } from "../config/config.ts";
 
+/**
+ * another one with descriptive name.
+ *
+ * sends prompt to Gemini and receives generated text.
+ *
+ * @param prompt what user wants.
+ * @returns what gemini generated.
+ */
 export async function generateContent(prompt: string) {
   const ai: GoogleGenAI = new GoogleGenAI({ apiKey: appConfig.geminiApiKey });
 

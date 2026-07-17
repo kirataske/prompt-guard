@@ -5,6 +5,11 @@ import { PromptResultModel } from "./helpers/storage/prompts-model.ts";
 import { generateContent } from "./helpers/gen-ai.ts";
 import { logger } from "./logging/logger.ts";
 
+/**
+ * (i'm out of creativity)
+ *
+ * route controller, that receives prompt, generates content, according to prompt, and returns result to user.
+ */
 export async function processPrompt(req: Request, res: Response) {
   try {
     if (!req.userPrompt || !req.userPromptHash) {

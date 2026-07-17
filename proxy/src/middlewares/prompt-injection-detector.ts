@@ -8,6 +8,11 @@ import { PRMHelper } from "../helpers/storage/query-helper.ts";
 import { isIpLoopback } from "../helpers/ip-is-loopback.ts";
 import { logger } from "../logging/logger.ts";
 
+/**
+ * middleware that sends prompt to detector
+ * and, basend on received verdict from detector,
+ * chooses to report occured incident or to continue with prompt.
+ */
 export async function analyzePromptMiddleware(
   req: Request,
   res: Response,
@@ -37,6 +42,8 @@ export async function analyzePromptMiddleware(
     const incidentSevere: boolean = isIncidentSevere(incident);
 
     if (!incidentSevere) return next();
+
+    logger.child(incident).warn("injection detected, displaying info...");
 
     await PRMHelper.cachePromptWIncident({
       calculatedHash: req.userPromptHash,

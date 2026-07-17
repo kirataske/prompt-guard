@@ -11,6 +11,9 @@ import {
 
 import { PromptResultModel } from "./prompts-model.ts";
 
+/**
+ * database model for storing incidents.
+ */
 @Table
 export class IncidentLogModel extends Model {
   @AllowNull(false)
@@ -46,9 +49,11 @@ export class IncidentLogModel extends Model {
   @Column(DataType.TEXT)
   segment: string;
 
+  // storing prompt id for relation reasons.
   @ForeignKey(() => PromptResultModel)
   userPromptId: number;
 
+  // sequelize relation api related thing.
   @BelongsTo(() => PromptResultModel)
   userPrompt: ReturnType<() => PromptResultModel>;
 }

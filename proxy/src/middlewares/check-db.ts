@@ -5,6 +5,13 @@ import { PRMHelper } from "../helpers/storage/query-helper.ts";
 import { logger } from "../logging/logger.ts";
 import { isIpLoopback } from "../helpers/ip-is-loopback.ts";
 
+/**
+ * another middleware with descriptive name.
+ *
+ * checks db for existing prompt results.
+ *
+ * if one is found with related incidents, reports about reoccuring incident.
+ */
 export async function lookupDb(
   req: Request,
   res: Response,
@@ -44,6 +51,10 @@ export async function lookupDb(
     }
     // assume that we have incident because previous check failed.
     const incident = foundUserPrompt.get().incident.get();
+
+    logger
+      .child(incident)
+      .warn("incident reoccured, now displaying saved info...");
 
     return failure(res, ResponseCodes.INJECTION_DETECTED, {
       message: "prompt injection was detected",

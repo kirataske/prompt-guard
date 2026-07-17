@@ -1,16 +1,16 @@
 class AppConfig {
-  // daily limits for generating responses.
   // TODO: including blocked responses, leave it as is?
+  // daily limits for generating responses.
   public readonly genAiDailyWindowInMs: number = 24 * 60 * 60 * 1000; // 24 hours.
   public readonly genAiDailyRequestsPerIp: number = 20; // Gemini's Free Tier Requests Per Day.
 
-  // limits for generating responses (per minute).
   // TODO: same as for daily limits.
+  // limits for generating responses (per minute).
   public readonly genAiMinuteWindowInMs: number = 60 * 1000; // 1 minute.
   public readonly genAiRequestsPerMinute: number = 5; // Gemini's Free Tier Requests Per Minute.
 
-  // limits for obtaining incident logs.
   // TODO: adjust according to client's requests frequency.
+  // limits for obtaining incident logs.
   public readonly incidentRequestWindowInMs: number = 15 * 60 * 1000; // 15 minutes (recommended value: express-rate-limit)
   public readonly incidentRequestsPerIp: number = 100; // (recomended value: express-rate-limit)
 
