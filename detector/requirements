@@ -7,3 +7,4 @@ joblib
 datasets
 numpy
 python-dotenv
+openai
